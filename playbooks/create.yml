@@ -53,5 +53,10 @@
     - name: save cluster config path
       set_stats:
         data:
-          cluster_config: "{{ config_output.resource }}"
+          cluster_config: "{{ lookup('file', config_output.resource.config_file_path) }}"
+
+    - name: save cluster config path as fact
+      set_fact:
+        cluster_config: "{{ lookup('file', config_output.resource.config_file_path) }}"
+
       
