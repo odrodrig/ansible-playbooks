@@ -25,9 +25,9 @@
       no_log: true
 
     - name: Set OpenShift Token
-      set_fact:
-        cacheable: True
-        openshift_auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
+      set_stats:
+        data:
+          openshift_auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
       no_log: true
 
     - name: Install OpenShift GitOps

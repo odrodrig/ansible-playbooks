@@ -3,7 +3,6 @@
   hosts: localhost
   collections:
   - ibm.cloudcollection
-  gather_facts: false
   tasks:
 
     - name: Fetch list of users from users file

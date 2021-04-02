@@ -16,13 +16,8 @@
         - '"cluster could not be found" not in cluster_output.stderr'
       register: cluster_output
 
-    - name: Prints two lines of messages, but only if there is an environment value set
-      ansible.builtin.debug:
-        var: result
-        verbosity: 2
-
     - name: Save Cluster info as fact
-      set_fact:
+      set_stats:
         cacheable: True
         cluster_info: "{{ cluster_output.resource }}"
       when: cluster_output.rc==0
@@ -41,9 +36,9 @@
       when: cluster_output.rc != 0
 
     - name: save created cluster info as fact
-      set_fact:
-        cacheable: True
-        cluster_info: "{{ cluster_create_output.resource }}"
+      set_stats:
+        data:
+          cluster_info: "{{ cluster_create_output.resource }}"
       when: cluster_create_output.resource.id is defined
 
     - name: Save Cluster config File
@@ -52,17 +47,7 @@
       register: config_output
 
     - name: save cluster config path as fact
-      set_fact:
-        cacheable: True
-        cluster_config: "{{ config_output.resource }}"
-      when: config_output.rc==0      
-
-    - name: Print Cluster info 
-      debug:
-        msg: "cluster : {{ cluster_info }}"
-
-    - name: Print Clustet config file path
-      debug:
-        msg: "cluster config file path : {{ cluster_config.config_file_path }}"
-      when: config_output.rc==0
+      set_stats:
+        data:
+          cluster_config: "{{ config_output.resource }}"
       
