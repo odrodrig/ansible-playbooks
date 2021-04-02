@@ -18,8 +18,8 @@
 
     - name: Save Cluster info as fact
       set_stats:
-        cacheable: True
-        cluster_info: "{{ cluster_output.resource }}"
+        data:
+          cluster_info: "{{ cluster_output.resource }}"
       when: cluster_output.rc==0
     
     - name: Create Openshift Cluster
