@@ -28,12 +28,18 @@
       set_fact:
         auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
 
+    - name: Get kubeconfig
+      copy: 
+        content: "{{ cluster_config }}"
+        dest: "/tmp/kube_config"
+
+
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
         state: present
         api_key: "{{ auth_token }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
-        kubeconfig: "{{ cluster_config }}"
+        kubeconfig: "/tmp/kube_config"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
