@@ -33,6 +33,7 @@
         state: present
         api_key: "{{ auth_token }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
+        kubeconfig: "{{ cluster_config.config_file_path }}"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription

@@ -50,7 +50,7 @@
         cluster_name_id: "{{cluster_output.resource.id}}"
       register: config_output
 
-    - name: save cluster config path as fact
+    - name: save cluster config path
       set_stats:
         data:
           cluster_config: "{{ config_output.resource }}"
