@@ -8,10 +8,6 @@
       include_vars:
         file: vars.yml
 
-    - name: Fetch the secrets from secrets file
-      include_vars:
-        file: secrets.yml
-
     - name: Check if cluster Exists
       ibm_container_cluster_info:
         name: "{{ cluster_name }}"
