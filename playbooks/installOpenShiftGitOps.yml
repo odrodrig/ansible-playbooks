@@ -1,5 +1,5 @@
 ---
-- name: Pipelines install 
+- name: OpenShift GitOps install 
   hosts: localhost
   tasks:
     - name: Get OpenShift Token Endpoint
@@ -39,7 +39,6 @@
         api_key: "{{ auth_token }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
         kubeconfig: "/tmp/kube_config"
-        context: "default/c117-e-us-south-containers-cloud-ibm-com:31427/IAM#odrodrig@us.ibm.com"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
