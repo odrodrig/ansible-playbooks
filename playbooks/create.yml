@@ -21,6 +21,10 @@
         data:
           cluster_info: "{{ cluster_output.resource }}"
       when: cluster_output.rc==0
+
+    - name: set cluster info
+      set_fact:
+        cluster_info: "{{ cluster_output.resource }}"
     
     - name: Create Openshift Cluster
       ibm_container_cluster:
@@ -41,13 +45,13 @@
           cluster_info: "{{ cluster_create_output.resource }}"
       when: cluster_create_output.resource.id is defined
 
-    # - name: Save Cluster config File
-    #   ibm_container_cluster_config_info:
-    #     cluster_name_id: "{{cluster_info.id}}"
-    #   register: config_output
+    - name: Save Cluster config File
+      ibm_container_cluster_config_info:
+        cluster_name_id: "{{cluster_output.resource.id}}"
+      register: config_output
 
-    # - name: save cluster config path as fact
-    #   set_stats:
-    #     data:
-    #       cluster_config: "{{ config_output.resource }}"
+    - name: save cluster config path as fact
+      set_stats:
+        data:
+          cluster_config: "{{ config_output.resource }}"
       
