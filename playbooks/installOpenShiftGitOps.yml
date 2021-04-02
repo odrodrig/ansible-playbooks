@@ -14,7 +14,7 @@
         url: "{{issuer_output.json.authorization_endpoint}}?client_id=openshift-challenging-client&response_type=token"
         method: GET
         user: apikey
-        password: "{{ ibmcloud_apikey }}"
+        password: "{{ lookup('env', 'IC_API_KEY') }}"
         headers: 
           Content-Type: application/json
           X-CSRF-Token: "a"
