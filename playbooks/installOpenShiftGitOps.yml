@@ -9,10 +9,6 @@
         body_format: json
       register: issuer_output
 
-    - name: print output
-      debug:
-        msg: "{{ issuer_output }}"
-
     - name: Get Openshift Token
       uri:
         url: "{{issuer_output.json.authorization_endpoint}}?client_id=openshift-challenging-client&response_type=token"
@@ -28,14 +24,14 @@
       register: openshift_token
       no_log: true
 
-    - name: print output
-      debug:
-        msg: "{{ openshift_token }}"
+    - name: set Token
+      set_fact:
+        auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
 
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
         state: present
-        api_key: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
+        api_key: "{{ auth_token }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
