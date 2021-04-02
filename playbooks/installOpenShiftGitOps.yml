@@ -9,6 +9,10 @@
         body_format: json
       register: issuer_output
 
+    - name: print output
+      debug:
+        msg: "{{ issuer_output }}"
+
     - name: Get Openshift Token
       uri:
         url: "{{issuer_output.json.authorization_endpoint}}?client_id=openshift-challenging-client&response_type=token"
@@ -23,6 +27,10 @@
           - 302
       register: openshift_token
       no_log: true
+
+    - name: print output
+      debug:
+        msg: "{{ openshift_token }}"
 
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
