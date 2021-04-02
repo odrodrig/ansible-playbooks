@@ -24,16 +24,10 @@
       register: openshift_token
       no_log: true
 
-    - name: Set OpenShift Token
-      set_stats:
-        data:
-          openshift_auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
-      no_log: true
-
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
         state: present
-        api_key: "{{ openshift_auth_token }}"
+        api_key: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
         definition:
           apiVersion: operators.coreos.com/v1alpha1

@@ -16,7 +16,7 @@
         - '"cluster could not be found" not in cluster_output.stderr'
       register: cluster_output
 
-    - name: Save Cluster info as fact
+    - name: Save Cluster info
       set_stats:
         data:
           cluster_info: "{{ cluster_output.resource }}"
@@ -35,19 +35,19 @@
       register: cluster_create_output
       when: cluster_output.rc != 0
 
-    - name: save created cluster info as fact
+    - name: save created cluster info
       set_stats:
         data:
           cluster_info: "{{ cluster_create_output.resource }}"
       when: cluster_create_output.resource.id is defined
 
-    - name: Save Cluster config File
-      ibm_container_cluster_config_info:
-        cluster_name_id: "{{cluster_info.id}}"
-      register: config_output
+    # - name: Save Cluster config File
+    #   ibm_container_cluster_config_info:
+    #     cluster_name_id: "{{cluster_info.id}}"
+    #   register: config_output
 
-    - name: save cluster config path as fact
-      set_stats:
-        data:
-          cluster_config: "{{ config_output.resource }}"
+    # - name: save cluster config path as fact
+    #   set_stats:
+    #     data:
+    #       cluster_config: "{{ config_output.resource }}"
       
