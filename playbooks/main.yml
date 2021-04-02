@@ -1,0 +1,4 @@
+---
+- import_playbook: create.yml
+- import_playbook: installOpenShiftGitOps.yml
+- import_playbook: addUsers.yml

@@ -1,0 +1,24 @@
+---
+- name: Add users to OpenShift cluster
+  hosts: localhost
+  collections:
+  - ibm.cloudcollection
+  gather_facts: false
+  tasks:
+
+    - name: Fetch list of users from users file
+      include_vars:
+        file: vars.yml
+
+    - name: IBM IAM user invite
+      ibm_iam_user_invite:
+        users: "{{ users }}"
+        iam_policy:
+          - roles:
+             - Manager
+             - Viewer
+            resources:
+              - service: containers-kubernetes
+                resource_instance_id: "{{ cluster_info.id }}"
+
+    

@@ -4,13 +4,26 @@
   collections:
    - ibm.cloudcollection
   tasks:
+    - name: Fetch the variables from var file
+      include_vars:
+        file: vars.yml
+
+    - name: Fetch the secrets from secrets file
+      include_vars:
+        file: secrets.yml
+
     - name: Check if cluster Exists
       ibm_container_cluster_info:
-        cluster_name_id: "{{ cluster_name }}"
+        name: "{{ cluster_name }}"
       failed_when:
         - cluster_output.rc != 0
         - '"cluster could not be found" not in cluster_output.stderr'
       register: cluster_output
+
+    - name: Prints two lines of messages, but only if there is an environment value set
+      ansible.builtin.debug:
+        var: result
+        verbosity: 2
 
     - name: Save Cluster info as fact
       set_fact:
@@ -18,19 +31,18 @@
         cluster_info: "{{ cluster_output.resource }}"
       when: cluster_output.rc==0
     
-    # - name: Create Openshift Cluster
-    #   ibm_container_cluster:
-    #     name: "{{ cluster_name }}"
-    #     datacenter: "{{ datacenter }}"
-    #     machine_type: "{{ machine_type }}"
-    #     hardware: "{{ hardware }}"
-    #     kube_version: "{{ kube_version }}"
-    #     public_vlan_id: "{{ public_vlan_id }}"
-    #     private_vlan_id: "{{ private_vlan_id }}"
-    #     default_pool_size: "{{ default_worker_ppol_size }}"
-    #     entitlement: "{{ entitlement }}"
-    #   register: cluster_create_output
-    #   when: cluster_output.rc != 0
+    - name: Create Openshift Cluster
+      ibm_container_cluster:
+        name: "{{ cluster_name }}"
+        datacenter: "{{ datacenter }}"
+        hardware: "{{ hardware }}"
+        kube_version: "{{ kube_version }}"
+        public_vlan_id: "{{ public_vlan_id }}"
+        private_vlan_id: "{{ private_vlan_id }}"
+        default_pool_size: "{{ default_worker_ppol_size }}"
+        entitlement: "{{ entitlement }}"
+      register: cluster_create_output
+      when: cluster_output.rc != 0
 
     - name: save created cluster info as fact
       set_fact:

@@ -1,0 +1,6 @@
+---
+cluster_name: "oliver-ocp-4-6"
+ibmcloud_apikey: "{{ vault_ibmcloud_apikey }}"
+users:
+  - demo_user_fake@yahoo.com
+access_group_id: "AccessGroupId-4c881b6d-525d-41ff-9722-6e5ba45d02d3"

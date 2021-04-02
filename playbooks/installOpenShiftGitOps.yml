@@ -1,0 +1,50 @@
+---
+- name: Pipelines install 
+  hosts: localhost
+  tasks:
+    - name: Get OpenShift Token Endpoint
+      uri:
+        url: "{{ cluster_info.public_service_endpoint_url}}/.well-known/oauth-authorization-server"
+        method: Get
+        body_format: json
+      register: issuer_output
+
+    - name: Get Openshift Token
+      uri:
+        url: "{{issuer_output.json.authorization_endpoint}}?client_id=openshift-challenging-client&response_type=token"
+        method: GET
+        user: apikey
+        password: "{{ ibmcloud_apikey }}"
+        headers: 
+          Content-Type: application/json
+          X-CSRF-Token: "a"
+        follow_redirects: none
+        status_code: 
+          - 302
+      register: openshift_token
+      no_log: true
+
+    - name: Set OpenShift Token
+      set_fact:
+        cacheable: True
+        openshift_auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
+      no_log: true
+
+    - name: Install OpenShift GitOps
+      community.kubernetes.k8s:
+        state: present
+        api_key: "{{ openshift_auth_token }}"
+        host: "{{ cluster_info.public_service_endpoint_url }}"
+        definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
+          metadata:
+            name: openshift-gitops-operator
+            namespace: openshift-operators
+          spec:
+            channel: preview
+            installPlanApproval: Automatic
+            name: openshift-gitops-operator
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
+            startingCSV: openshift-gitops-operator.v1.0.0
