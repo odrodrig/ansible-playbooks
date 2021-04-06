@@ -33,6 +33,16 @@
         content: "{{ cluster_config }}"
         dest: "/tmp/kube_config"
 
+    - name: Remove file (delete file)
+      ansible.builtin.file:
+        path: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+        state: absent
+
+    - name: Set Token in filesystem
+      copy: 
+        content: "{{ auth_token }}"
+        dest: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
         state: present
