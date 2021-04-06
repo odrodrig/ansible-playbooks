@@ -33,24 +33,26 @@
         content: "{{ cluster_config }}"
         dest: "/tmp/kube_config"
 
-    - name: Return motd to registered var
-      ansible.builtin.command: printenv
-      register: myenv
+    - name: get tmp
+      ansible.builtin.command: ls /tmp/
+      register: tmp
 
-    - name: print env
+    - name: debug
       debug:
-        msg: "{{ myenv }}"
+        msg: tmp
 
-    - name: Print all available facts
-      ansible.builtin.debug:
-        var: ansible_facts
+    - name: get tmp
+      ansible.builtin.command: cat /tmp/kube_config
+
+    - name: debug config 
+      debug:
+        msg: "{{ cluster_config }}"
 
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
         state: present
         api_key: "{{ auth_token }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
-        kubeconfig: "/tmp/kube_config"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
