@@ -24,34 +24,18 @@
       register: openshift_token
       no_log: true
 
-    - name: set Token
-      set_fact:
-        auth_token: "{{ openshift_token.location.split('=')[1].split('&')[0] }}"
-
-    - name: Get kubeconfig
-      copy: 
-        content: "{{ cluster_config }}"
-        dest: "/tmp/kube_config.yaml"
-
-    - name: get tmp
-      ansible.builtin.command: cat /tmp/kube_config.yaml
-      register: os_config
-
-    - name: debug os_config
-      debug:
-        msg: "{{ os_config }}"
-
-    - name: debug config 
-      debug:
-        msg: "{{ cluster_config }}"
-
     - name: Install OpenShift GitOps
-      community.kubernetes.k8s:
-        state: present
-        # api_key: "{{ auth_token }}"
-        # host: "{{ cluster_info.public_service_endpoint_url }}"
-        kubeconfig: "/tmp/kube_config.yaml"
-        definition:
+      uri: 
+        url: "{{ cluster_info.public_service_endpoint_url}}/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions"
+        method: POST
+        body_format: json
+        status_code: 
+          - 200
+          - 201
+          - 409
+        headers:
+          Authorization: "Bearer {{ openshift_token.location.split('=')[1].split('&')[0] }}"
+        body:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
           metadata:
