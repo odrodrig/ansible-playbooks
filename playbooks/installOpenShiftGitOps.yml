@@ -47,7 +47,7 @@
 
     - name: debug os_config
       debug:
-        msng: "{{ os_config }}"
+        msg: "{{ os_config }}"
 
     - name: debug config 
       debug:
