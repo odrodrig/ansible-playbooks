@@ -33,15 +33,17 @@
         content: "{{ cluster_config }}"
         dest: "/tmp/kube_config"
 
-    - name: Remove file (delete file)
-      ansible.builtin.file:
-        path: "/var/run/secrets/kubernetes.io/serviceaccount/token"
-        state: absent
+    - name: Return motd to registered var
+      ansible.builtin.command: printenv
+      register: myenv
 
-    - name: Set Token in filesystem
-      copy: 
-        content: "{{ auth_token }}"
-        dest: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    - name: print env
+      debug:
+        msg: "{{ myenv }}"
+
+    - name: Print all available facts
+      ansible.builtin.debug:
+        var: ansible_facts
 
     - name: Install OpenShift GitOps
       community.kubernetes.k8s:
