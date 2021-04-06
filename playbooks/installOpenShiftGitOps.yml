@@ -50,7 +50,7 @@
         state: present
         # api_key: "{{ auth_token }}"
         # host: "{{ cluster_info.public_service_endpoint_url }}"
-        kubeconfig: "{{ cluster_config }}""
+        kubeconfig: "/tmp/kube_config.yaml"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
