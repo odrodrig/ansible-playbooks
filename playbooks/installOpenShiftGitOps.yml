@@ -31,18 +31,10 @@
     - name: Get kubeconfig
       copy: 
         content: "{{ cluster_config }}"
-        dest: "/tmp/kube_config"
+        dest: "/tmp/kube_config.yaml"
 
     - name: get tmp
-      ansible.builtin.command: ls /tmp/
-      register: tmp
-
-    - name: debug
-      debug:
-        msg: "{{ tmp }}"
-
-    - name: get tmp
-      ansible.builtin.command: cat /tmp/kube_config
+      ansible.builtin.command: cat /tmp/kube_config.yaml
       register: os_config
 
     - name: debug os_config
@@ -58,6 +50,7 @@
         state: present
         api_key: "{{ auth_token }}"
         host: "{{ cluster_info.public_service_endpoint_url }}"
+        kubeconfig: "/tmp/kube_config.yaml"
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
