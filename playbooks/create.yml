@@ -50,13 +50,35 @@
         cluster_name_id: "{{cluster_output.resource.id}}"
       register: config_output
 
-    - name: save cluster config path
-      set_stats:
-        data:
-          cluster_config: "{{ lookup('file', config_output.resource.config_file_path) }}"
+    # - name: save cluster config path
+    #   set_stats:
+    #     data:
+    #       cluster_config: "{{ lookup('file', config_output.resource.config_file_path) }}"
 
     - name: save cluster config path as fact
       set_fact:
-        cluster_config: "{{ lookup('file', config_output.resource.config_file_path) }}"
+        cacheable: True
+        cluster_config: "{{ config_output.resource }}"
+      when: config_output.rc==0     
+
+    - name: Install OpenShift GitOps
+      community.kubernetes.k8s:
+        state: present
+        # api_key: "{{ auth_token }}"
+        # host: "{{ cluster_info.public_service_endpoint_url }}"
+        kubeconfig: "{{ cluster_config.config_file_path }}"
+        definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
+          metadata:
+            name: openshift-gitops-operator
+            namespace: openshift-operators
+          spec:
+            channel: preview
+            installPlanApproval: Automatic
+            name: openshift-gitops-operator
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
+            startingCSV: openshift-gitops-operator.v1.0.0
 
       
