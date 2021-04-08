@@ -5,10 +5,6 @@
    - ibm.cloudcollection
   tasks:
 
-    - name: Fetch the variables from var file
-      include_vars:
-        file: vars.yml
-
     - name: Check if cluster Exists
       ibm_container_cluster_info:
         name: "{{ cluster_name }}"
