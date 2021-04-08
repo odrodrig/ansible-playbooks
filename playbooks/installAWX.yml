@@ -1,5 +1,5 @@
 ---
-- name: OpenShift GitOps install 
+- name: AWX install 
   hosts: localhost
   collections:
    - ibm.cloudcollection
@@ -43,9 +43,16 @@
       register: openshift_token
       no_log: true
 
-    - name: Install OpenShift GitOps
+    - name: Install AWX Operator
+      command: "oc apply -f {{ lookup('env', 'PWD') }}/awx-operator.yaml"
+
+    - name: Create new AWX project
+      command: "oc new-project awx"
+      ignore_errors: yes
+      
+    - name: Create AWX Instance
       uri: 
-        url: "{{ cluster_info.public_service_endpoint_url}}/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions"
+        url: "{{ cluster_info.public_service_endpoint_url}}/apis/awx.ansible.com/v1beta1/namespaces/awx/awxs/"
         method: POST
         body_format: json
         status_code: 
@@ -55,15 +62,10 @@
         headers:
           Authorization: "Bearer {{ openshift_token.location.split('=')[1].split('&')[0] }}"
         body:
-          apiVersion: operators.coreos.com/v1alpha1
-          kind: Subscription
+          apiVersion: awx.ansible.com/v1beta1
+          kind: AWX
           metadata:
-            name: openshift-gitops-operator
-            namespace: openshift-operators
+            name: awx
+            namespace: awx
           spec:
-            channel: preview
-            installPlanApproval: Automatic
-            name: openshift-gitops-operator
-            source: redhat-operators
-            sourceNamespace: openshift-marketplace
-            startingCSV: openshift-gitops-operator.v1.0.0
+            tower_ingress_type: Route
