@@ -45,7 +45,7 @@
 
     - name: Install OpenShift Compliance Operator
       uri: 
-        url: "{{ cluster_info.public_service_endpoint_url}}/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions"
+        url: "{{ cluster_info.public_service_endpoint_url}}/apis/operators.coreos.com/v1alpha1/namespaces/default/subscriptions"
         method: POST
         body_format: json
         status_code: 
@@ -59,7 +59,9 @@
           kind: Subscription
           metadata:
             name: compliance-operator
-            namespace: openshift-compliance
+            namespace: default
+            labels:
+              operators.coreos.com/compliance-operator.default: ''
           spec:
             channel: '4.6'
             installPlanApproval: Automatic
